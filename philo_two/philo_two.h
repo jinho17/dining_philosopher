@@ -6,7 +6,7 @@
 /*   By: jinkim <jinkim@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 00:20:32 by jinkim            #+#    #+#             */
-/*   Updated: 2021/01/21 15:02:36 by jinkim           ###   ########.fr       */
+/*   Updated: 2021/01/26 18:31:47 by jinkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,11 @@
 # include <stdio.h>
 # include <pthread.h>
 # include <stdlib.h>
-#include <semaphore.h>
-#include <sys/types.h>
+# include <semaphore.h>
+# include <sys/types.h>
 
-#define SEM_NAME "/Users/jinkim/philosopher/philo_two/philo_two"
+# define SEM_FORK "/philo_two_fork"
+# define SEM_PT "/philo_two_print"
 
 typedef struct		s_parameters
 {
@@ -39,11 +40,20 @@ typedef struct		s_thread
 	pthread_t		thd;
 	char			*name;
 	int				die;
+	int				eat;
+	int				last_eat;
 }					t_thread;
 t_thread			*g_thd;
 
-sem_t				*g_sem;
-int					g_fork_idx;
+typedef struct		s_semaphore
+{
+	sem_t			*fork;
+	sem_t			*print;
+}					t_semaphore;
+t_semaphore			g_sem;
+
+int					*g_fork;
+int					g_print;
 
 /*
 ** main.c
@@ -63,7 +73,7 @@ int					ft_atoi(const char *nptr);
 */
 void				thd_join(void);
 int					thd_create(void);
-sem_t				*init_semaphore(void);
+sem_t				*init_semaphore(char *name, int value);
 void				init_malloc(void);
 int					init_param(int argc, char *argv[]);
 
@@ -75,12 +85,14 @@ void				*thread_func(void	*philo_name);
 /*
 ** thread_utils.c
 */
+int					must_eat_cnt(void);
 int					cal_timeval(struct timeval bgn);
 void				print_sentence(char *philo_name, char *sentence);
 
 /*
 ** semaphore.c
 */
-void				get_sem(int fork, char *philo_name);
+void				get_sem_print(char *philo_name, char *str);
+void				get_sem_fork(int fork, char *philo_name);
 
 #endif

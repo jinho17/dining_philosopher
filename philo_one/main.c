@@ -6,7 +6,7 @@
 /*   By: jinkim <jinkim@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/16 14:58:22 by jinkim            #+#    #+#             */
-/*   Updated: 2021/01/21 00:20:14 by jinkim           ###   ########.fr       */
+/*   Updated: 2021/01/22 01:38:22 by jinkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int		main(int argc, char *argv[])
 	if (thd_create() < 0)
 	{
 		ft_putstr_fd("Pthread create error!\n", 1);
+		var_free();
 		return (0);
 	}
 	thd_join();

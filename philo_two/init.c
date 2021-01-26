@@ -6,7 +6,7 @@
 /*   By: jinkim <jinkim@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 00:23:15 by jinkim            #+#    #+#             */
-/*   Updated: 2021/01/21 14:47:36 by jinkim           ###   ########.fr       */
+/*   Updated: 2021/01/26 18:31:58 by jinkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,15 @@ int		thd_create(void)
 	return (0);
 }
 
-sem_t	*init_semaphore(void)
+sem_t	*init_semaphore(char *name, int value)
 {
 	sem_t *sem;
 
-	sem = sem_open(SEM_NAME, O_CREAT, 0644, g_param.number_of_philosophers);
-	if(sem == SEM_FAILED)
-		return NULL;
-	return sem;
+	sem_unlink(name);
+	sem = sem_open(name, O_CREAT, 0644, value);
+	if (sem == SEM_FAILED)
+		return (NULL);
+	return (sem);
 }
 
 void	init_malloc(void)
@@ -58,12 +59,16 @@ void	init_malloc(void)
 
 	g_thd = (t_thread *)malloc(
 				sizeof(t_thread) * g_param.number_of_philosophers);
-	g_fork_idx = 0;
+	g_fork = (int *)malloc(sizeof(int) * g_param.number_of_philosophers);
+	g_print = 0;
 	idx = 0;
 	while (idx < g_param.number_of_philosophers)
 	{
 		g_thd[idx].name = ft_itoa(idx + 1);
 		g_thd[idx].die = 0;
+		g_thd[idx].eat = 0;
+		g_thd[idx].last_eat = 0;
+		g_fork[idx] = 0;
 		idx++;
 	}
 	gettimeofday(&g_param.bgn, NULL);
