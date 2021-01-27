@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jinkim <jinkim@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/21 00:17:58 by jinkim            #+#    #+#             */
-/*   Updated: 2021/01/28 03:17:11 by jinkim           ###   ########.fr       */
+/*   Created: 2021/01/26 18:50:00 by jinkim            #+#    #+#             */
+/*   Updated: 2021/01/27 23:56:48 by jinkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_two.h"
+#include "philo_three.h"
 
 void	var_free(void)
 {
@@ -19,10 +19,11 @@ void	var_free(void)
 	idx = 0;
 	while (idx < g_param.number_of_philosophers)
 	{
-		free(g_thd[idx].name);
+		free(g_ps.name[idx]);
 		idx++;
 	}
-	free(g_thd);
+	free(g_ps.pid);
+	free(g_ps.name);
 	sem_close(g_sem.fork);
 	sem_close(g_sem.print);
 	sem_close(g_sem.eat);
@@ -48,12 +49,11 @@ int		main(int argc, char *argv[])
 		var_free();
 		return (0);
 	}
-	if (thd_create() < 0)
+	if (ps_create() < 0)
 	{
-		ft_putstr_fd("Pthread create error!\n", 1);
+		ft_putstr_fd("Process create error!\n", 1);
 		var_free();
 		return (0);
 	}
-	thd_join();
 	var_free();
 }

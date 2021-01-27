@@ -1,4 +1,4 @@
-NAME = philo_two
+NAME = philo_three
 
 CC = gcc
 LIB = -lpthread
@@ -6,7 +6,7 @@ LIB = -lpthread
 HEADER_DIR = -I.
 CFLAGS = -Wall -Wextra -Werror $(HEADER_DIR)
 
-SRCS = main.c init.c utils.c thread_utils.c thread.c
+SRCS = main.c init.c child_ps.c utils.c child_ps_utils.c
 
 OBJ = $(SRCS:.c=.o)
 

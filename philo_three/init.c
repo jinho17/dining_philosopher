@@ -5,40 +5,48 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jinkim <jinkim@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/21 00:23:15 by jinkim            #+#    #+#             */
-/*   Updated: 2021/01/28 03:08:06 by jinkim           ###   ########.fr       */
+/*   Created: 2021/01/26 19:06:41 by jinkim            #+#    #+#             */
+/*   Updated: 2021/01/27 23:58:31 by jinkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_two.h"
+#include "philo_three.h"
 
-void	thd_join(void)
+void	ps_wait(void)
 {
 	int		idx;
-	int		result;
+	int		status;
 
 	idx = 0;
 	while (idx < g_param.number_of_philosophers)
 	{
-		pthread_join(g_thd[idx].thd, (void *)&result);
+		if (idx == g_param.number_of_philosophers - 1)
+			kill(g_ps.pid[idx], SIGINT);
+		waitpid(g_ps.pid[idx], &status, 0);
 		idx++;
+		if (WEXITSTATUS(status) == 1)
+		{
+			while (idx < g_param.number_of_philosophers)
+				kill(g_ps.pid[idx++], SIGINT);
+		}
 	}
 }
 
-int		thd_create(void)
+int		ps_create(void)
 {
 	int		idx;
-	int		rtn;
 
 	idx = 0;
 	while (idx < g_param.number_of_philosophers)
 	{
-		rtn = pthread_create(
-				&g_thd[idx].thd, NULL, thread_func, (void *)g_thd[idx].name);
-		if (rtn < 0)
+		g_ps.pid[idx] = fork();
+		if (g_ps.pid[idx] == 0)
+			child_ps(g_ps.name[idx]);
+		else if (g_ps.pid < 0)
 			return (-1);
 		idx++;
 	}
+	ps_wait();
 	return (0);
 }
 
@@ -57,16 +65,15 @@ void	init_malloc(void)
 {
 	int		idx;
 
-	g_thd = (t_thread *)malloc(
-				sizeof(t_thread) * g_param.number_of_philosophers);
-	g_enough_eat = 0;
+	g_ps.pid = (pid_t *)malloc(sizeof(pid_t) * g_param.number_of_philosophers);
+	g_ps.name = (char **)malloc(
+				sizeof(char *) * g_param.number_of_philosophers);
+	g_ps.eat = 0;
+	g_ps.last_eat = 0;
 	idx = 0;
 	while (idx < g_param.number_of_philosophers)
 	{
-		g_thd[idx].name = ft_itoa(idx + 1);
-		g_thd[idx].die = 0;
-		g_thd[idx].eat = 0;
-		g_thd[idx].last_eat = 0;
+		g_ps.name[idx] = ft_itoa(idx + 1);
 		idx++;
 	}
 	gettimeofday(&g_param.bgn, NULL);
