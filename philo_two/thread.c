@@ -6,7 +6,7 @@
 /*   By: jinkim <jinkim@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 00:48:27 by jinkim            #+#    #+#             */
-/*   Updated: 2021/01/28 03:11:32 by jinkim           ###   ########.fr       */
+/*   Updated: 2021/02/01 17:39:55 by jinkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	*thread_func(void *philo_name)
 {
 	int		philo_num;
 
-	philo_num = ft_atoi(philo_name);
+	philo_num = ft_atoi(philo_name) - 1;
 	while (1)
 	{
 		if (get_fork(philo_name) < 0)
